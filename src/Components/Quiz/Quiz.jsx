@@ -4,45 +4,69 @@ import { data } from '/src/assets/data_en.js';
 
 const Quiz = () => {
 
-  let [index, setIndex] = useState(0);
-  let [question, setQuestion] = useState(data[index]);
-  let [lock, setLock] = useState(false);
-  let [result, setResult] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [question, setQuestion] = useState(data[0]);
+  const [lock, setLock] = useState(false);
+  const [result, setResult] = useState(false);
+  const [selectedAns, setSelectedAns] = useState(null);
+  const [score, setScore] = useState({'V': 0, 'S': 0, 'C': 0, 'G': 0});
 
-  let Option1 = useRef(null);
-  let Option2 = useRef(null);
-  let Option3 = useRef(null);
-  let Option4 = useRef(null);
+  const Option1 = useRef(null);
+  const Option2 = useRef(null);
+  const Option3 = useRef(null);
+  const Option4 = useRef(null);
 
-  let optionArray = [Option1, Option2, Option3, Option4];
+  const optionArray = [Option1, Option2, Option3, Option4];
+  const scoreSystem = [[{'V': 2, 'S': 1}, {'S': 2, 'G': 1}, {'C': 2, 'G': 1}, {'G': 2, 'V': 1}], //1st Question
+                    [{'V': 2, 'C': 1}, {'S': 2, 'V': 1}, {'C': 2, 'S': 1}, {'G': 2, 'S': 1}], //2nd Question
+                    [{'V': 2, 'S': 1}, {'S': 2, 'V': 1}, {'C': 2, 'G': 1}, {'G': 2, 'C': 1}], //3rd Question
+                    [{'V': 2, 'S': 1}, {'S': 2, 'V': 1}, {'C': 2, 'G': 1}, {'G': 2, 'C': 1}], //4th Question
+                    [{'V': 2, 'S': 1}, {'S': 2, 'G': 1}, {'C': 2, 'G': 1}, {'G': 2, 'V': 1}], //5th Question
+                    [{'V': 2, 'G': 1}, {'S': 2, 'V': 1}, {'C': 2, 'S': 1}, {'G': 2, 'C': 1}], //6th Question
+                    [{'V': 2, 'S': 1}, {'S': 2, 'V': 1}, {'C': 2, 'G': 1}, {'G': 2, 'C': 1}], //7th Question
+                    [{'V': 2, 'S': 1}, {'S': 2, 'V': 1}, {'C': 2, 'G': 1}, {'G': 2, 'C': 1}]]; // 8th Question
 
-  const LockAnswer = (e) => {
+  
+  const LockAnswer = (e, ansIndex) => {
     if (lock === false){
         e.target.classList.add("green");
+        setSelectedAns(ansIndex);
         setLock(true);
     }
     else {
       if (e.target.classList.contains("green")){
-      e.target.classList.remove("green");
-      setLock(false);
+        e.target.classList.remove("green");
+        setSelectedAns(null);
+        setLock(false);
       }
     }
   }
 
   const next = () => {
-    if (lock===true){
-      if (index === data.length - 1){
-        setResult(true);
-        return 0;
-      }
-      setIndex(++index);
-      setQuestion(data[index]);
-      setLock(false);
-      optionArray.map((option) => {
-        option.current.classList.remove("green");
-        return null;
-      })
+    if (!lock) return;
+
+    if (selectedAns !== null) {
+      const answerScore = scoreSystem[index][selectedAns - 1];
+      const updatedScore = {...score};
+      Object.keys(answerScore).forEach((key) => {
+        updatedScore[key] += answerScore[key];
+      });
+      setScore(updatedScore);
     }
+
+    if (index === data.length - 1){
+      setResult(true);
+      return 0;
+    }
+    const newIndex = index + 1;
+    setIndex(newIndex);
+    setQuestion(data[newIndex]);
+    setLock(false);
+    setSelectedAns(null);
+
+    optionArray.forEach((option) => {
+      option.current.classList.remove("green");
+    });
   }
 
   return (
@@ -60,6 +84,13 @@ const Quiz = () => {
       <button onClick={next}>Next</button>
       <div className="index">{index + 1} of {data.length} questions </div>
       </>}
+      {result?<>
+      <h2>Your Score:</h2>
+      <p>V: {score.V}</p>
+      <p>S: {score.S}</p>
+      <p>C: {score.C}</p>
+      <p>G: {score.G}</p>
+      </>:<hr />}
     </div>
   );
 }
