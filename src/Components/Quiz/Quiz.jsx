@@ -1,8 +1,20 @@
 import React, { useEffect, useState, useRef } from 'react';
 import '/src/Components/Quiz/Quiz.css';
-import { data } from '/src/assets/data_en.js';
+import Sunflower from '/src/assets/Helianthus Big Smile.png'
+import Celosia from '/src/assets/Celosia Plumosa.png'
+import Gomphrena from '/src/assets/Gomphrena Gnome.png'
+import Vunca from '/src/assets/Vunca Sun Jewels.png'
 
-const Quiz = () => {
+import Land from '/src/assets/question_images/IMG_3317.PNG'
+import Lock from '/src/assets/question_images/IMG_3320.PNG'
+import People from '/src/assets/question_images/IMG_3321.PNG'
+import Chair from '/src/assets/question_images/IMG_3323.PNG'
+import Feiry from '/src/assets/question_images/IMG_3324.PNG'
+import Tree from '/src/assets/question_images/IMG_3325.PNG'
+import Train from '/src/assets/question_images/IMG_3326.PNG'
+import Cups from '/src/assets/question_images/IMG_3327.PNG'
+
+const Quiz = ({ data }) => {
 
   const [index, setIndex] = useState(0);
   const [question, setQuestion] = useState(data[0]);
@@ -10,12 +22,20 @@ const Quiz = () => {
   const [result, setResult] = useState(false);
   const [selectedAns, setSelectedAns] = useState(null);
   const [score, setScore] = useState({'V': 0, 'S': 0, 'C': 0, 'G': 0});
+  const [finalResult, setFinalResult] = useState('');
+  const resultImages = {
+    Sunflower: Sunflower,
+    Celosia: Celosia,
+    Gomphrena: Gomphrena,
+    Vunca: Vunca
+  };
 
   const Option1 = useRef(null);
   const Option2 = useRef(null);
   const Option3 = useRef(null);
   const Option4 = useRef(null);
 
+  const questionImages = [Land, Lock, People, Chair, Feiry, Tree, Train, Cups];
   const optionArray = [Option1, Option2, Option3, Option4];
   const scoreSystem = [[{'V': 2, 'S': 1}, {'S': 2, 'G': 1}, {'C': 2, 'G': 1}, {'G': 2, 'V': 1}], //1st Question
                     [{'V': 2, 'C': 1}, {'S': 2, 'V': 1}, {'C': 2, 'S': 1}, {'G': 2, 'S': 1}], //2nd Question
@@ -26,7 +46,23 @@ const Quiz = () => {
                     [{'V': 2, 'S': 1}, {'S': 2, 'V': 1}, {'C': 2, 'G': 1}, {'G': 2, 'C': 1}], //7th Question
                     [{'V': 2, 'S': 1}, {'S': 2, 'V': 1}, {'C': 2, 'G': 1}, {'G': 2, 'C': 1}]]; // 8th Question
 
-  
+  const getResult = (finalScore) => {
+    const maxKey = Object.keys(finalScore).reduce((a, b) => finalScore[a] > finalScore[b] ? a : b);
+
+    switch (maxKey) {
+      case 'V':
+        return 'Vunca';
+      case 'S':
+        return 'Sunflower';
+      case 'C':
+        return 'Celosia';
+      case 'G':
+        return 'Gomphrena';
+      default:
+        return 'Sunflower';
+    }
+  }
+
   const LockAnswer = (e, ansIndex) => {
     if (lock === false){
         e.target.classList.add("green");
@@ -52,11 +88,14 @@ const Quiz = () => {
         updatedScore[key] += answerScore[key];
       });
       setScore(updatedScore);
-    }
+    
 
-    if (index === data.length - 1){
-      setResult(true);
-      return 0;
+      if (index === data.length - 1){
+        const resultName = getResult(updatedScore);
+        setFinalResult(resultName);
+        setResult(true);
+        return 0;
+      }
     }
     const newIndex = index + 1;
     setIndex(newIndex);
@@ -70,11 +109,14 @@ const Quiz = () => {
   }
 
   return (
-    <div className = 'container'>
-      <h1>Find Your Bloomings</h1>
-      <hr />
+    <>
       {result?<></>:<>
+      <h1>Find Your Bloomling</h1>
+      <hr />
         <h2>{index + 1}. {question.question}</h2>
+        <div className="image-frame">
+          <img src={questionImages[index]} alt={questionImages[index]} className="question-image" />
+        </div>
       <ul>
         <li ref={Option1} onClick={(e) => {LockAnswer(e,1)}}>{question.option1}</li>
         <li ref={Option2} onClick={(e) => {LockAnswer(e,2)}}>{question.option2}</li>
@@ -85,13 +127,9 @@ const Quiz = () => {
       <div className="index">{index + 1} of {data.length} questions </div>
       </>}
       {result?<>
-      <h2>Your Score:</h2>
-      <p>V: {score.V}</p>
-      <p>S: {score.S}</p>
-      <p>C: {score.C}</p>
-      <p>G: {score.G}</p>
+      <img src={resultImages[finalResult]} alt={finalResult} className="result-image" />
       </>:<hr />}
-    </div>
+    </>
   );
 }
 
