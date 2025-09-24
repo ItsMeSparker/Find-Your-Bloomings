@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import '/src/Components/Quiz/Quiz.css';
-import Sunflower from '/src/assets/Helianthus Big Smile.png'
-import Celosia from '/src/assets/Celosia Plumosa.png'
-import Gomphrena from '/src/assets/Gomphrena Gnome.png'
-import Vunca from '/src/assets/Vunca Sun Jewels.png'
+import Sunflower from '/src/assets/Sunflower-2.jpg'
+import Celosia from '/src/assets/Celosia-2.jpg'
+import Gomphrena from '/src/assets/Gomphrena-2.jpg'
+import Vunca from '/src/assets/Vinca-2.jpg'
 
 import Land from '/src/assets/question_images/IMG_3317.PNG'
 import Lock from '/src/assets/question_images/IMG_3320.PNG'
